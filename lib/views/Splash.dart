@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projectfirebase/views/Onboarding.dart';
-import 'package:projectfirebase/views/home.dart';
+import 'package:projectfirebase/views/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/';
@@ -16,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<Offset> _slideAnimation2;
+
   @override
   void initState() {
     super.initState();
@@ -41,12 +43,26 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoginViewed = prefs.getBool('login') ?? false;
+
     Future.delayed(Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        if (isLoginViewed) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          );
+        }
       }
     });
   }
@@ -71,7 +87,6 @@ class _SplashScreenState extends State<SplashScreen>
               opacity: _fadeAnimation,
               child: SlideTransition(
                 position: _slideAnimation,
-
                 child: Image.asset(
                   "assets/images/logo.jpg.avif",
                   height: 350,

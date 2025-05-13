@@ -20,6 +20,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
+    _setLoginViewed();
+  }
+
+  Future<void> _setLoginViewed() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('login', true);
   }
 
   List<Map<String, String>> getOnboardingData(BuildContext context) {
